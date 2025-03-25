@@ -43,6 +43,7 @@ buyurtma berish imkoniyatini beruvchi layhaning BackEnd API
     - id
     - name
     - email
+    - phoneNumber
     - imageUrl
     - createdAt
     - updateAt
