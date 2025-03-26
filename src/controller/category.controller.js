@@ -8,7 +8,7 @@ const getAllCategories = async (req, res) => {
         limit = Number(Array.isArray(limit) ? limit[0] : limit);
         page = Number(Array.isArray(page) ? page[0] : page);
 
-        if (isNaN(limit) || isNaN(page) || limit <= 0 || page <= 0) {
+        if (isNaN(limit) || isNaN(page)) {
             return res.status(400).json({
                 message: "Limit yoki page noto'g'ri kiritildi!"
             });
