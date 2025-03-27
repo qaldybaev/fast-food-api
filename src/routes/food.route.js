@@ -6,5 +6,8 @@ const foodRouter = Router()
 foodRouter
     .get("/", foodController.getAllFoods)
     .post("/", foodController.createFood)
+    .get("/:id",foodController.getOneFood)
+    .patch("/:id",foodController.updateFood)
+    .delete("/:id",foodController.deleteFood)
 
 export default foodRouter
