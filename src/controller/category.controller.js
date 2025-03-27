@@ -28,7 +28,7 @@ const getAllCategories = async (req, res) => {
 
         const allCategory = await categoryModel.countDocuments();
         const categories = await categoryModel
-            .find().
+            .find().populate("foods").
             sort({ [sortField]: order })
             .limit(limit).
             skip(skip);
