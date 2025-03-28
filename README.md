@@ -44,6 +44,8 @@ buyurtma berish imkoniyatini beruvchi layhaning BackEnd API
     - name
     - email
     - phoneNumber
+    - password
+    - role
     - imageUrl
     - createdAt
     - updateAt
