@@ -1,48 +1,51 @@
-
 import mongoose from "mongoose";
+import { ROLES } from "../constans/role.constants.js";
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema(
+  {
     name: {
-        type: mongoose.SchemaTypes.String,
-        required: true
+      type: mongoose.SchemaTypes.String,
+      required: true,
     },
     email: {
-        type: mongoose.SchemaTypes.String,
-        required: true,
-        unique: true,
-        match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/gim,
-
+      type: mongoose.SchemaTypes.String,
+      required: true,
+      unique: true,
+      match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/gim,
     },
     password: {
-        type: mongoose.SchemaTypes.String,
-        required: true
+      type: mongoose.SchemaTypes.String,
+      required: true,
     },
     phoneNumber: {
-        type: mongoose.SchemaTypes.String,
-        required: true,
-        unique: true,
-        minLength: 9,
-        maxLength: 9,
-        match: /^(9[012345789]|6[125679]|7[0123456789]|3[3]|8[8]|2[0]|5[05])[0-9]{7}$/,
+      type: mongoose.SchemaTypes.String,
+      required: true,
+      unique: true,
+      minLength: 9,
+      maxLength: 9,
+      match:
+        /^(9[012345789]|6[125679]|7[0123456789]|3[3]|8[8]|2[0]|5[05])[0-9]{7}$/,
     },
     imageUrl: {
-        type: mongoose.SchemaTypes.String,
-        required: false
+      type: mongoose.SchemaTypes.String,
+      required: false,
     },
     role: {
-        type: mongoose.SchemaTypes.String,
-        enum: ["VIEWER", "RESTAURANT_OWNER", "SUPER_ADMIN"],
-        default: 'VIEWER'
+      type: mongoose.SchemaTypes.String,
+      enum: [ROLES.VIEWER, ROLES.SUPER_ADMIN, ROLES.RESTAURANT_OWNER],
+      default: ROLES.VIEWER,
     },
-    orders:[{
-        type:mongoose.SchemaTypes.ObjectId,
-        
-    }]
-},
-    {
-        collection: "users",
-        timestamps: true,
-        versionKey: false
-    })
+    orders: [
+      {
+        type: mongoose.SchemaTypes.ObjectId,
+      },
+    ],
+  },
+  {
+    collection: "users",
+    timestamps: true,
+    versionKey: false,
+  }
+);
 
-export default mongoose.model("User", userSchema)
+export default mongoose.model("User", userSchema);
