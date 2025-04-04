@@ -2,6 +2,7 @@ import { hash, compare } from "bcrypt";
 import userModel from "../model/user.model.js"
 import jwt from "jsonwebtoken";
 import { BaseException } from "../exception/base.exception.js";
+import { ACCESS_TOKEN_EXPIRE_TIME, ACCESS_TOKEN_SECRET_KEY, REFRESH_TOKEN_EXPIRE_TIME, REFRESH_TOKEN_SECRET_KEY } from "../config/jwt.config.js";
 
 
 const register = async (req, res, next) => {
@@ -27,14 +28,8 @@ const register = async (req, res, next) => {
             password: passwordHash
         });
 
-        const token = jwt.sign({ id: user.id, role: user.role }, "o'ta_secret", {
-            expiresIn: "2h",
-            algorithm: "HS256"
-        });
-
         res.status(201).send({
             message: "Success✅",
-            token: token,
             data: user
         })
     } catch (error) {
@@ -57,9 +52,21 @@ const login = async (req, res, next) => {
         if (!isMatch) {
             throw new BaseException("Invalid password", 401)
         }
+        const accessToken = jwt.sign({ id: user.id, role: user.role }, ACCESS_TOKEN_SECRET_KEY, {
+            expiresIn: ACCESS_TOKEN_EXPIRE_TIME,
+            algorithm: "HS256"
+        });
+        const refreshToken = jwt.sign({ id: user.id, role: user.role }, REFRESH_TOKEN_SECRET_KEY, {
+            expiresIn: REFRESH_TOKEN_EXPIRE_TIME,
+            algorithm: "HS256"
+        });
 
         res.send({
             message: "success",
+            tokens:{
+                accessToken,
+                refreshToken,
+            },
             data: user,
         });
     } catch (error) {
@@ -79,6 +86,25 @@ const getAllUsers = async (req, res, next) => {
         })
     } catch (error) {
         next(error)
+    }
+}
+
+const refresh = async (req, res, next) => {
+    try {
+        const { refreshToken } = req.body
+
+        const data = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET_KEY)
+
+
+
+    } catch (error) {
+        if (error instanceof jwt.TokenExpiredError) {
+            next(BaseException("Refresh token expired", 422))
+        } else if (error instanceof jwt.JsonWebTokenError) {
+            next(BaseException("Invalid refresh token", 400))
+        } else {
+            next(error)
+        }
     }
 }
 

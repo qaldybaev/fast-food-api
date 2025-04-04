@@ -2,6 +2,8 @@ import { isValidObjectId } from "mongoose"
 import foodModel from "../model/food.model.js"
 import categoryModel from "../model/category.model.js";
 import { BaseException } from "../exception/base.exception.js";
+import fs from "fs";
+import path from "path";
 
 
 const getAllFoods = async (req, res,next) => {
@@ -66,7 +68,7 @@ const createFood = async (req, res,next) => {
       price,
       category,
       description,
-      imageUrl,
+      imageUrl:req.file.filename,
     });
   
     await categoryModel.updateOne(
@@ -118,25 +120,32 @@ const updateFood = async (req, res,next) => {
     }
 }
 
-const deleteFood = async (req, res,next) => {
-    try {
-        const { id } = req.params;
 
-    if (!isValidObjectId(id)) {
-        throw new BaseException(`Given ID: ${id} is not valid Object ID`,400)
-    }
-
+const deleteFood = async (req, res, next) => {
+  try {
+    const { id } = req.params;
     const food = await foodModel.findById(id);
-    if (!food) {
-        throw new BaseException("Id topilmadi",404)
-    }
 
+    if (!food) {
+      throw new BaseException("Food not found", 404);
+    }
+    if (food.imageUrl) {
+        try {
+          const imagePath = path.join(process.cwd(), "uploads", food.imageUrl); 
+          await fs.promises.unlink(imagePath); 
+        } catch (err) {
+          return next(err); 
+        }
+      }
+      
     await foodModel.deleteOne({ _id: id });
 
-    res.status(204).send();
-    } catch (error) {
-        next(error)
-    }
-}
+    res.status(204).json();
+
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 export default { getAllFoods, getOneFood, createFood, deleteFood, updateFood };

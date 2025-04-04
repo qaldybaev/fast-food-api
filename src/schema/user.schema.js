@@ -17,3 +17,7 @@ export const loginSchema = Joi.object({
     password: Joi.string().required()
 
 })
+
+export const refreshSchema = Joi.object({
+    refreshToken:Joi.string().required()
+}).required()
